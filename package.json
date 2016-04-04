@@ -1,0 +1,20 @@
+{
+  "name": "WBA2SS16JantaAmakranNeziri",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/THK-DNS/WBA2SS16JantaAmakranNeziri.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/THK-DNS/WBA2SS16JantaAmakranNeziri/issues"
+  },
+  "homepage": "https://github.com/THK-DNS/WBA2SS16JantaAmakranNeziri#readme"
+}
