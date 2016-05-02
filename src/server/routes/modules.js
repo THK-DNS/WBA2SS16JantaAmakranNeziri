@@ -1,7 +1,7 @@
 const express = require('express');
 const users = new express.Router();
 
-users.route('/')
+users.route('/module/')
   .get((req, res) => {
     res.end();
   })
