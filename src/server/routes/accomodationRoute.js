@@ -23,7 +23,7 @@ accomodationRoute.route('/')
 
 accomodationRoute.route('/:id')
   .get((req, res) => {
-    accomodationModel.getAccomodation(req.params.id, (data) => {
+    accomodationModel.getAccomodationsById(req.params.id, (data) => {
       res.json(data);
       res.end();
     });
@@ -35,7 +35,10 @@ accomodationRoute.route('/:id')
     res.end();
   })
   .delete((req, res) => {
-    res.end();
+    accomodationModel.removeAccomodation(req.params.id, (err) => {
+      console.log(err);
+      res.end();
+    });
 });
 
 module.exports = accomodationRoute;
