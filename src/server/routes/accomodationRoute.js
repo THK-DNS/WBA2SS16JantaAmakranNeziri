@@ -42,8 +42,13 @@ accomodationRoute.route('/:id')
     res.end();
   })
   .put((req, res) => {
-    console.log(req.body);
-    res.end();
+    accomodationModel.updateAccomodation(req.params.id, req.body, (err) => {
+      if(err) {
+        console.log(err);
+      }
+
+      res.end();
+    });
   })
   .delete((req, res) => {
     accomodationModel.removeAccomodation(req.params.id, (err) => {

@@ -76,8 +76,15 @@ class Accomodations {
 		});
 	}
 
-	updateAccomodation(data, callback) {
+	updateAccomodation(id, accomodation, callback) {
+		pg.connect(this.dbUrl, (err, client, done) => {
+			if (err) throw err;
 
+			client.query(`UPDATE Accomodations SET owner='${accomodation.owner}', title='${accomodation.title}', description='${accomodation.description}', picture='${accomodation.picture}' WHERE id='${id}';`, (err, result) => {
+				done();
+				callback(err);
+			});
+		});
 	}
 
 }
