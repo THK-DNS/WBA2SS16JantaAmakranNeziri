@@ -1,7 +1,7 @@
 const express = require('express');
-const modules = new express.Router();
+const evaluationRoute = new express.Router();
 
-modules.route('/')
+evaluationRoute.route('/')
   .get((req, res) => {
     res.end();
   })
@@ -15,4 +15,4 @@ modules.route('/')
     res.end();
   });
 
-module.exports = users;
+module.exports = evaluationRoute;
