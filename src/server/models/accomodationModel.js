@@ -65,8 +65,15 @@ class Accomodations {
 		});
 	}
 
-	addAccomodation(data, callback) {
+	addAccomodation(accomodation, callback) {
+		pg.connect(this.dbUrl, (err, client, done) => {
+			if (err) throw err;
 
+			client.query(`INSERT INTO Accomodations(owner, title, description, picture) VALUES('${accomodation.owner}', '${accomodation.title}', '${accomodation.description}', '${accomodation.picture}');`, (err, result) => {
+				done();
+				callback(err);
+			});
+		});
 	}
 
 	updateAccomodation(data, callback) {
