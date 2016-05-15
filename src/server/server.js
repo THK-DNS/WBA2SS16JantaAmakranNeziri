@@ -1,9 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-// Routes
+// routes
 const accomodationRoute = require('./routes/accomodationRoute.js');
 const evaluationRoute = require('./routes/evaluationRoute.js');
+const userRoute = require('./routes/userRoute.js');
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(bodyParser.json());
 
 app.use('/accomodation', accomodationRoute);
 app.use('/evaluation', evaluationRoute);
+app.use('/user', userRoute);
 
-// server wartet auf localhost:3000 auf neue verbindungen
+// start server listener
 app.listen(3000);
