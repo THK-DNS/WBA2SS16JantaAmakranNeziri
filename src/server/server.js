@@ -7,7 +7,7 @@ const evaluationRoute = require('./routes/evaluationRoute.js');
 
 const app = express();
 
-// express soll json bodyparser verwenden
+// use json bodyparser
 app.use(bodyParser.json());
 
 app.use('/accomodation', accomodationRoute);

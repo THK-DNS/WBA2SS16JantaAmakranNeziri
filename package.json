@@ -5,7 +5,10 @@
   "main": "dist/server/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/server/server.js"
+    "start": "node dist/server/server.js",
+    "build": "./node_modules/.bin/babel src/ -d dist/ --quiet",
+    "lint": "./node_modules/.bin/eslint src/ || exit 0",
+    "prestart": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -24,12 +27,6 @@
     "eslint-config-airbnb": "^7.0.0",
     "eslint-plugin-jsx-a11y": "^0.6.2",
     "eslint-plugin-react": "^4.3.0",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^6.1.2",
-    "gulp-eslint": "^2.0.0",
-    "gulp-shell": "^0.5.2",
-    "gulp-util": "^3.0.7",
-    "gulp-watch": "^4.3.5",
     "react": "^15.0.1"
   },
   "dependencies": {
