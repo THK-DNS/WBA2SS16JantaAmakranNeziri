@@ -1,8 +1,10 @@
 const express = require('express');
 const Accomodations = require('../models/accomodationModel.js');
+const Evaluations = require('../models/evaluationModel.js');
 
 const accomodationRoute = new express.Router();
 const accomodationModel = new Accomodations(process.env.DATABASE_URL);
+const evaluationModel = new Evaluations(process.env.DATABASE_URL);
 
 accomodationRoute.route('/')
   .get((req, res) => {
@@ -58,6 +60,23 @@ accomodationRoute.route('/:id')
 
       res.end();
     });
+});
+
+accomodationRoute.route('/:id/evaluations')
+  .get((req, res) => {
+    evaluationModel.getEvaluationsByAccomodation(req.params.id, (data) => {
+      res.json(data);
+      res.end();
+    });
+  })
+  .post((req, res) => {
+    res.end();
+  })
+  .put((req, res) => {
+    res.end();
+  })
+  .delete((req, res) => {
+    res.end();
 });
 
 module.exports = accomodationRoute;

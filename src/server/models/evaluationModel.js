@@ -22,7 +22,7 @@ class Evaluations {
 		});
 	}
 
-	getEvaluationById(id, callback) {
+	getEvaluationsById(id, callback) {
 		pg.connect(this.dbUrl, (err, client, done) => {
 			if (err) throw err;
 
@@ -38,7 +38,7 @@ class Evaluations {
 		});
 	}
 
-	getEvaluationByWriter(writerId, callback) {
+	getEvaluationsByWriter(writerId, callback) {
 		pg.connect(this.dbUrl, (err, client, done) => {
 			if (err) throw err;
 
@@ -54,7 +54,7 @@ class Evaluations {
 		});
 	}
 
-	getEvaluationByAccomodation(accomodationId, callback) {
+	getEvaluationsByAccomodation(accomodationId, callback) {
 		pg.connect(this.dbUrl, (err, client, done) => {
 			if (err) throw err;
 

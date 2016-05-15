@@ -29,7 +29,7 @@ evaluationRoute.route('/')
 
 evaluationRoute.route('/:id')
   .get((req, res) => {
-    evaluationModel.getEvaluationById(req.params.id, (data) => {
+    evaluationModel.getEvaluationsById(req.params.id, (data) => {
       res.json(data);
       res.end();
     });
