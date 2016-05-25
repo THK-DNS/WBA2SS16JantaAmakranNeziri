@@ -2,11 +2,13 @@ const express = require('express');
 const Users = require('../models/userModel.js');
 const Evaluations = require('../models/evaluationModel.js');
 const Accomodations = require('../models/accomodationModel.js');
+const redisClient = require('../redisClient.js');
 
 const userRoute = new express.Router();
-const userModel = new Users(process.env.DATABASE_URL);
-const accomodationModel = new Accomodations(process.env.DATABASE_URL);
-const evaluationModel = new Evaluations(process.env.DATABASE_URL);
+
+const userModel = new Users(redisClient);
+const accomodationModel = new Accomodations(redisClient);
+const evaluationModel = new Evaluations(redisClient);
 
 userRoute.route('/')
   .get((req, res) => {
@@ -17,12 +19,9 @@ userRoute.route('/')
   	});
   })
   .post((req, res) => {
-    userModel.addUser(req.body, (err) => {
-  		if(err) {
-  			console.log(err);
-  		}
-
-  		res.end();
+    userModel.addUser(req.body, (user) => {
+      
+  		res.end(user);
   	});
   })
   .put((req, res) => {
