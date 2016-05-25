@@ -16,4 +16,4 @@ app.use('/evaluation', evaluationRoute);
 app.use('/user', userRoute);
 
 // start server listener
-app.listen(3000);
+app.listen(process.env.PORT);

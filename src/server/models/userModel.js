@@ -13,7 +13,7 @@ class Users {
 	}
 
 	addUser(user, callback) {
-		this.redisClient.rpush('users', JSON.stringify(user), (err, res) => {
+		this.redisClient.rpush('users', [JSON.stringify(user)], (err, res) => {
 			callback(user);
 		});
 	}
