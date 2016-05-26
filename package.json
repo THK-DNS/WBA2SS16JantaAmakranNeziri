@@ -31,6 +31,7 @@
     "react": "^15.0.1"
   },
   "dependencies": {
+    "bluebird": "^3.4.0",
     "body-parser": "^1.15.0",
     "express": "^4.13.4",
     "jade": "^1.11.0",

@@ -3,6 +3,7 @@ const Users = require('../models/userModel.js');
 const Evaluations = require('../models/evaluationModel.js');
 const Accomodations = require('../models/accomodationModel.js');
 const redisClient = require('../redisClient.js');
+const Promise = require('bluebird');
 
 const userRoute = new express.Router();
 
@@ -13,15 +14,15 @@ const evaluationModel = new Evaluations(redisClient);
 userRoute.route('/')
   .get((req, res) => {
   	// Get all users
-  	userModel.getUsers((data) => {
-  		res.json(data);
+  	userModel.getUsers().then((users) => {
+  		res.json(users);
   		res.end();
   	});
   })
   .post((req, res) => {
-    userModel.addUser(req.body, (user) => {
-      
-  		res.end(user);
+    userModel.addUser(req.body).then((user) => {
+      res.json(user);
+  		res.end();
   	});
   })
   .put((req, res) => {
@@ -34,8 +35,8 @@ userRoute.route('/')
 userRoute.route('/:id')
   .get((req, res) => {
     // get user by id
-    userModel.getUserById(req.params.id, (data) => {
-  		res.json(data);
+    userModel.getUserById(req.params.id).then((user) => {
+  		res.json(user);
   		res.end();
   	});
   })
@@ -43,22 +44,22 @@ userRoute.route('/:id')
     res.end();
   })
   .put((req, res) => {
-    userModel.updateUser(req.params.id, req.body, (err) => {
-  		if(err) {
-  			console.log(err);
-  		}
-
+    userModel.updateUser(req.params.id, req.body).then(() => {
+  		res.json(req.body);
   		res.end();
-  	});
+  	}).catch(() => {
+      res.status(404);
+      res.end();
+    });
   })
   .delete((req, res) => {
-    userModel.removeUser(req.params.id, (err) => {
-  		if(err) {
-  			console.log(err);
-  		}
-
+    userModel.removeUser(req.params.id).then(() => {
+  		res.json(data);
   		res.end();
-  	});
+  	}).catch(() => {
+      res.status(404);
+      res.end();
+    });
 });
 
 userRoute.route('/:id/accomodations')
