@@ -1,75 +1,88 @@
-const pg = require('pg');
-pg.defaults.ssl = true;
+const redisClient = require('../redisClient.js');
 
 class Users {
-	constructor(url) {
-		this.dbUrl = url;
-	}
+  constructor(redisClient) {
+    
+  }
 
-	getUsers(callback) {
-		pg.connect(this.dbUrl, (err, client, done) => {
-			if (err) throw err;
+  getUsers() {
+    const users = [];
+    return redisClient.getAsync('userIds').then((res) => {
+      return new Promise((resolve) => {
+        const count = parseInt(res, 10) + 1;
+        let numRejected = 0;
 
-			client.query("SELECT array_to_json(array_agg(row_to_json(u))) FROM (SELECT id, username FROM Users) u;", (err, result) => {
-				done();
-				if(err) {
-					return console.error(err);
-				} 
+        for (let i = 0; i < count; i++) {
+          this.getUserById(i).then((data) => {
+            // fulfilled
+            if (data !== null) {
+              // Replace password
+              users.push(data);
+            } else {
+              numRejected++;
+            }
 
-				// Invoke callback with result in json array format
-				callback(result.rows[0].array_to_json);
-			});
-		});
-	}
+            if (users.length + numRejected === count) {
+              // We reached the end so resolve now callback
+              resolve(users);
+            }
+          });
+        }
+      });
+    });
+  }
 
-	getUserById(id, callback) {
-		pg.connect(this.dbUrl, (err, client, done) => {
-			if (err) throw err;
+  getUserById(id) {
+    return redisClient.getAsync(`users:${id}`).then((res) => {
+      const obj = JSON.parse(res);
 
-			client.query(`SELECT array_to_json(array_agg(row_to_json(u))) FROM (SELECT id, username FROM Users WHERE id='${id}') u;`, (err, result) => {
-				done();
-				if(err) {
-					return console.error(err);
-				} 
+      return new Promise((resolve) => {
+        if(obj != null) {
+          resolve({ id: id, username: obj.username, password: '******' });
+        } else {
+          resolve(null);
+        }
+        
+      });
+    });
+  }
 
-				// Invoke callback with result in json array format
-				callback(result.rows[0].array_to_json);
-			});
-		});
-	}
+  addUser(user) {
+    return redisClient.incrAsync('userIds').then((res) => {
+      const id = res;
+      return redisClient.setAsync(`users:${id}`, JSON.stringify(user)).then(() => {
+        return new Promise((resolve) => {
+          resolve({ id: id, username: user.username, password: user.password });
+        });
+      });
+    });
+  }
 
-	addUser(user, callback) {
-		pg.connect(this.dbUrl, (err, client, done) => {
-			if (err) throw err;
+  updateUser(id, user) {
+    user.id = id;
+    return redisClient.setAsync(`users:${id}`, JSON.stringify(user), 'XX').then((res) => {
+      return new Promise((resolve, reject) => {
+        if (res === 'OK') {
+          resolve();
+        } else {
+          reject();
+        }
+      });
+    });
+  }
 
-			client.query(`INSERT INTO Users(username, password) VALUES('${user.username}', '${user.password}');`, (err, result) => {
-				done();
-				callback(err);
-			});
-		});
-	}
+  removeUser(id) {
+    return redisClient.delAsync(`users:${id}`, 'XX').then((res) => {
+      return new Promise((resolve, reject) => {
+        if (res === '1') {
+          resolve();
+        } else {
+          reject();
+        }
+      });
 
-	updateUser(id, user, callback) {
-		pg.connect(this.dbUrl, (err, client, done) => {
-			if (err) throw err;
-
-			client.query(`UPDATE Users SET username='${user.username}', password='${user.password}' WHERE id='${id}';`, (err, result) => {
-				done();
-				callback(err);
-			});
-		});
-	}
-
-	removeUser(id, callback) {
-		pg.connect(this.dbUrl, (err, client, done) => {
-			if (err) throw err;
-
-			client.query(`DELETE FROM Users WHERE id='${id}';`, (err, result) => {
-				done();
-				callback(err);
-			});
-		});
-	}
+    });
+  }
 }
 
 module.exports = Users;

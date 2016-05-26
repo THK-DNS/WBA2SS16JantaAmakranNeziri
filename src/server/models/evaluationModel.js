@@ -1,107 +1,80 @@
-const pg = require('pg');
-pg.defaults.ssl = true;
+const redisClient = require('../redisClient.js');
 
 class Evaluations {
-	constructor(url) {
-		this.dbUrl = url;
-	}
+  constructor() {
+  }
 
-	getEvaluations(callback) {
-		pg.connect(this.dbUrl, (err, client, done) => {
-			if (err) throw err;
+  getEvaluations() {
+    return redisClient.lrangeAsync('evaluations', 0, -1).then((evaluations) => {
+      var obj = JSON.parse('[' + evaluations + ']');
 
-			client.query("SELECT array_to_json(array_agg(Evaluations)) FROM Evaluations;", (err, result) => {
-				done();
-				if(err) {
-					return console.error(err);
-				} 
+      return new Promise((resolve) => {
+        resolve(obj);
+      })
+    });
+  }
 
-				// Invoke callback with result in json array format
-				callback(result.rows[0].array_to_json);
-			});
-		});
-	}
+  getEvaluationsById(id) {
+    return this.getEvaluations().then((evaluations) => {
+      const filteredEvaluations = evaluations.filter((elem) => {
+        return elem.id === parseInt(id, 10);
+      })
 
-	getEvaluationsById(id, callback) {
-		pg.connect(this.dbUrl, (err, client, done) => {
-			if (err) throw err;
+      return new Promise((resolve) => {
+        resolve(filteredEvaluations);
+      });
+    });
+  }
 
-			client.query(`SELECT array_to_json(array_agg(Evaluations)) FROM Evaluations WHERE id='${id}';`, (err, result) => {
-				done();
-				if(err) {
-					return console.error(err);
-				} 
+  getEvaluationsByWriter(writerId) {
+   return this.getEvaluations().then((evaluations) => {
+      const filteredEvaluations = evaluations.filter((elem) => {
+        return elem.writer === parseInt(writerId, 10);
+      })
 
-				// Invoke callback with result in json array format
-				callback(result.rows[0].array_to_json);
-			});
-		});
-	}
+      return new Promise((resolve) => {
+        resolve(filteredEvaluations);
+      });
+    });
+  }
 
-	getEvaluationsByWriter(writerId, callback) {
-		pg.connect(this.dbUrl, (err, client, done) => {
-			if (err) throw err;
+  getEvaluationsByAccommodation(accommodationId) {
+    return this.getEvaluations().then((evaluations) => {
+      const filteredEvaluations = evaluations.filter((elem) => {
+        return elem.accommodation === parse(accommodationId, 10);
+      })
 
-			client.query(`SELECT array_to_json(array_agg(Evaluations)) FROM Evaluations WHERE writer='${writerId}';`, (err, result) => {
-				done();
-				if(err) {
-					return console.error(err);
-				} 
+      return new Promise((resolve) => {
+        resolve(filteredEvaluations);
+      });
+    });
+  }
 
-				// Invoke callback with result in json array format
-				callback(result.rows[0].array_to_json);
-			});
-		});
-	}
+  addEvaluation(evaluation) {
+    return redisClient.incrAsync('evaluationIds').then((id) => {
+      return redisClient.rpushAsync('evaluations', JSON.stringify({
+        id: parseInt(id),
+        writer: evaluation.writer,
+        accommodation: evaluation.accommodation,
+        text: evaluation.text,
+        rating: evaluation.rating
+      }));
+    });
+  }
 
-	getEvaluationsByAccomodation(accomodationId, callback) {
-		pg.connect(this.dbUrl, (err, client, done) => {
-			if (err) throw err;
+  updateEvaluation(id, evaluation) {
+    return redisClient.lsetAsync('evaluations', parseInt(id), JSON.stringify({
+      id: parseInt(id, 10),
+      writer: parseInt(evaluation.writer, 10),
+      accommodation: evaluation.accommodation,
+      text: evaluation.text,
+      rating: evaluation.rating
+    }));
+  }
 
-			client.query(`SELECT array_to_json(array_agg(Evaluations)) FROM Evaluations WHERE accomodation='${accomodationId}';`, (err, result) => {
-				done();
-				if(err) {
-					return console.error(err);
-				} 
-
-				// Invoke callback with result in json array format
-				callback(result.rows[0].array_to_json);
-			});
-		});
-	}
-
-	addEvaluation(evaluation, callback) {
-		pg.connect(this.dbUrl, (err, client, done) => {
-			if (err) throw err;
-
-			client.query(`INSERT INTO Evaluations(writer, accomodation, text, rating) VALUES('${evaluation.writer}', '${evaluation.accomodation}', '${evaluation.text}', '${evaluation.rating}');`, (err, result) => {
-				done();
-				callback(err);
-			});
-		});
-	}
-
-	updateEvaluation(id, evaluation, callback) {
-		pg.connect(this.dbUrl, (err, client, done) => {
-			if (err) throw err;
-
-			client.query(`UPDATE Evaluations SET writer='${evaluation.writer}', accomodation='${evaluation.accomodation}', text='${evaluation.text}', rating='${evaluation.rating}' WHERE id='${id}';`, (err, result) => {
-				done();
-				callback(err);
-			});
-		});
-	}
-
-	removeEvaluation(id, callback) {
-		pg.connect(this.dbUrl, (err, client, done) => {
-			if (err) throw err;
-
-			client.query(`DELETE FROM Evaluations WHERE id='${id}';`, (err, result) => {
-				done();
-				callback(err);
-			});
-		});
-	}
+  deleteEvaluation(id) {
+   return this.updateEvaluation(id, { writer: -1, accommodation: -1, text: 'deleted', rating: 1 })
+  }
 }
 
 module.exports = Evaluations;
