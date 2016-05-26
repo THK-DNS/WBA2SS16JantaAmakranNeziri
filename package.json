@@ -8,7 +8,8 @@
     "start": "node dist/server/server.js",
     "build": "./node_modules/.bin/babel src/ -d dist/ --quiet",
     "lint": "./node_modules/.bin/eslint src/ || exit 0",
-    "prestart": "npm run build"
+    "prestart": "npm run build",
+    "clean": "rm -rf dist/"
   },
   "repository": {
     "type": "git",

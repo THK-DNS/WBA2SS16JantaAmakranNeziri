@@ -2,7 +2,8 @@ const express = require('express');
 const Evaluations = require('../models/evaluationModel.js');
 
 const evaluationRoute = new express.Router();
-const evaluationModel = new Evaluations(process.env.DATABASE_URL);
+
+const evaluationModel = new Evaluations();
 
 evaluationRoute.route('/')
 .get((req, res) => {

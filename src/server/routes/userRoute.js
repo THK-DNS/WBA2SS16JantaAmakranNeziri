@@ -1,12 +1,13 @@
 const express = require('express');
 const Users = require('../models/userModel.js');
 const Evaluations = require('../models/evaluationModel.js');
-const Accomodations = require('../models/accomodationModel.js');
+const Accommodations = require('../models/accommodationModel.js');
 
 const userRoute = new express.Router();
-const userModel = new Users(redisClient);
-const accomodationModel = new Accomodations(redisClient);
-const evaluationModel = new Evaluations(redisClient);
+
+const userModel = new Users();
+const accommodationModel = new Accommodations();
+const evaluationModel = new Evaluations();
 
 userRoute.route('/')
 .get((req, res) => {
@@ -59,10 +60,10 @@ userRoute.route('/:id')
   });
 });
 
-userRoute.route('/:id/accomodations')
+userRoute.route('/:id/accommodations')
 .get((req, res) => {
     // get user by id
-    accomodationModel.getAccomodationsByOwner(req.params.id, (data) => {
+    accommodationModel.getAccommodationsByOwner(req.params.id).then((data) => {
       res.json(data);
       res.end();
     });

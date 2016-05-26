@@ -1,8 +1,7 @@
 const redisClient = require('../redisClient.js');
 
 class Evaluations {
-  constructor(url) {
-    this.dbUrl = url;
+  constructor() {
   }
 
   getEvaluations(callback) {
@@ -53,11 +52,11 @@ class Evaluations {
    });
   }
 
-  getEvaluationsByAccomodation(accomodationId, callback) {
+  getEvaluationsByAccommodation(accommodationId, callback) {
     pg.connect(this.dbUrl, (err, client, done) => {
      if (err) throw err;
 
-     client.query(`SELECT array_to_json(array_agg(Evaluations)) FROM Evaluations WHERE accomodation='${accomodationId}';`, (err, result) => {
+     client.query(`SELECT array_to_json(array_agg(Evaluations)) FROM Evaluations WHERE accommodation='${accommodationId}';`, (err, result) => {
       done();
       if (err) {
        return console.error(err);
@@ -73,7 +72,7 @@ class Evaluations {
     pg.connect(this.dbUrl, (err, client, done) => {
      if (err) throw err;
 
-     client.query(`INSERT INTO Evaluations(writer, accomodation, text, rating) VALUES('${evaluation.writer}', '${evaluation.accomodation}', '${evaluation.text}', '${evaluation.rating}');`, (err, result) => {
+     client.query(`INSERT INTO Evaluations(writer, accommodation, text, rating) VALUES('${evaluation.writer}', '${evaluation.accommodation}', '${evaluation.text}', '${evaluation.rating}');`, (err, result) => {
       done();
       callback(err);
     });
@@ -84,7 +83,7 @@ class Evaluations {
     pg.connect(this.dbUrl, (err, client, done) => {
      if (err) throw err;
 
-     client.query(`UPDATE Evaluations SET writer='${evaluation.writer}', accomodation='${evaluation.accomodation}', text='${evaluation.text}', rating='${evaluation.rating}' WHERE id='${id}';`, (err, result) => {
+     client.query(`UPDATE Evaluations SET writer='${evaluation.writer}', accommodation='${evaluation.accommodation}', text='${evaluation.text}', rating='${evaluation.rating}' WHERE id='${id}';`, (err, result) => {
       done();
       callback(err);
     });
