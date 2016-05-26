@@ -81,7 +81,7 @@ userRoute.route('/:id/accommodations')
 userRoute.route('/:id/evaluations')
 .get((req, res) => {
     // get user by id
-    evaluationModel.getEvaluationsByWriter(req.params.id, (data) => {
+    evaluationModel.getEvaluationsByWriter(req.params.id).then((data) => {
       res.json(data);
       res.end();
     });

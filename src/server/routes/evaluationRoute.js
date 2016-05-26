@@ -7,17 +7,14 @@ const evaluationModel = new Evaluations();
 
 evaluationRoute.route('/')
 .get((req, res) => {
-  evaluationModel.getEvaluations((data) => {
+  evaluationModel.getEvaluations().then((data) => {
     res.json(data);
     res.end();
   });
 })
 .post((req, res) => {
-  evaluationModel.addEvaluation(req.body, (err) => {
-    if (err) {
-      console.log(err);
-    }
-
+  evaluationModel.addEvaluation(req.body).then((result) => {
+    res.json(req.body);
     res.end();
   });
 })
@@ -30,7 +27,7 @@ evaluationRoute.route('/')
 
 evaluationRoute.route('/:id')
 .get((req, res) => {
-  evaluationModel.getEvaluationsById(req.params.id, (data) => {
+  evaluationModel.getEvaluationsById(req.params.id).then((data) => {
     res.json(data);
     res.end();
   });
@@ -39,20 +36,14 @@ evaluationRoute.route('/:id')
   res.end();
 })
 .put((req, res) => {
-  evaluationModel.updateEvaluation(req.params.id, req.body, (err) => {
-    if (err) {
-      console.log(err);
-    }
-
+  evaluationModel.updateEvaluation(req.params.id, req.body).then((data) => {
+    res.write(data);
     res.end();
   });
 })
 .delete((req, res) => {
-  evaluationModel.removeEvaluation(req.params.id, (err) => {
-    if (err) {
-      console.log(err);
-    }
-
+  evaluationModel.deleteEvaluation(req.params.id).then((data) => {
+    res.write(data);
     res.end();
   });
 });

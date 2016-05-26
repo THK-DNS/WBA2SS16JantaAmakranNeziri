@@ -42,7 +42,7 @@ class Accommodations {
 
   addAccommodation(accommodation) {
     return redisClient.incrAsync('accommodationIds').then((res) => {
-      return redisClient.rpush('accommodations', JSON.stringify({
+      return redisClient.rpushAsync('accommodations', JSON.stringify({
         id: parseInt(res, 10), 
         owner: parseInt(accommodation.owner, 10), 
         title: accommodation.title, 
