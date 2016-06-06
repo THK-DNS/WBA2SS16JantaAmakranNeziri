@@ -1,15 +1,22 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+const express = require('express'); //Express for the web server
+const bodyParser = require('body-parser'); //Body-Parser to be able to formatted into JSON
 
-// Routes
-const modulesRouter = require('./routes/modules.js');
+// routes
+const accommodationRoute = require('./routes/accommodationRoute.js');
+const evaluationRoute = require('./routes/evaluationRoute.js');
+const userRoute = require('./routes/userRoute.js');
+// const travelRoute = require('./routes/travelRoute');
+
 
 const app = express();
 
-// express soll json bodyparser verwenden
+// use json bodyparser
 app.use(bodyParser.json());
 
-app.use('/modules', modulesRouter);
+app.use('/accommodations', accommodationRoute);
+app.use('/evaluations', evaluationRoute);
+app.use('/users', userRoute);
+//app.use('/traveldestination', travelRoute);
 
-// server wartet auf localhost:3000 auf neue verbindungen
-app.listen(3000);
+// start server listener
+app.listen(process.env.PORT);
