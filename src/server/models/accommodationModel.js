@@ -36,20 +36,33 @@ class Accommodations {
     });
   }
 
+  getAccommodationsByCity(city) {
+    return this.getAccommodations().then((accommodation) => {
+      var filtered = accomodation.filter((accommodation) => {
+        return accommodation.cty === city;
+      });
+
+      return new Promise((resolve) => {
+        resolve(filtered);
+      });
+    });
+  }
+
   deleteAccommodation(id) {
-    return this.updateAccommodation(id, { owner: -1, title: 'deleted', description: 'deleted', picture: 'deleted.png' });
+    return this.updateAccommodation(id, { owner: -1, title: 'deleted', description: 'deleted', picture: 'deleted.png', city: 'deleted' });
   }
 
   addAccommodation(accommodation) {
     return redisClient.incrAsync('accommodationIds').then((res) => {
       return redisClient.rpushAsync('accommodations', JSON.stringify({
-        id: parseInt(res, 10), 
-        owner: parseInt(accommodation.owner, 10), 
-        title: accommodation.title, 
-        description: accommodation.description, 
-        picture: accommodation.picture 
+        id: parseInt(res, 10),
+        owner: parseInt(accommodation.owner, 10),
+        title: accommodation.title,
+        description: accommodation.description,
+        picture: accommodation.picture,
+        city: accommodation.city
       }));
-    }); 
+    });
   }
 
   updateAccommodation(id, accommodation) {
@@ -58,7 +71,8 @@ class Accommodations {
       owner: parseInt(accommodation.owner, 10),
       title: accommodation.title,
       description: accommodation.description,
-      picture: accommodation.picture
+      picture: accommodation.picture,
+      city: accommodation.cty
     }));
   }
 }

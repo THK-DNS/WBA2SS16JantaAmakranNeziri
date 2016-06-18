@@ -6,44 +6,22 @@ class Users {
   }
 //GET
   getUsers() {
-    const users = [];
-    return redisClient.getAsync('userIds').then((res) => {
+    return redisClient.lrangeAsync('users', 0, -1).then((users) => {
       return new Promise((resolve) => {
-        const count = parseInt(res, 10) + 1;
-        let numRejected = 0;
-
-        for (let i = 0; i < count; i++) {
-          this.getUserById(i).then((data) => {
-            // fulfilled
-            if (data !== null) {
-              // Replace password
-              users.push(data);
-            } else {
-              numRejected++;
-            }
-
-            if (users.length + numRejected === count) {
-              // We reached the end so resolve now callback
-              resolve(users);
-            }
-          });
-        }
+        resolve(JSON.parse('[' + users + ']'));
       });
     });
   }
 
 //GET
   getUserById(id) {
-    return redisClient.getAsync(`users:${id}`).then((res) => {
-      const obj = JSON.parse(res);
+    return getUsers().then((users) => {
+      var filtered = users.filter((user) => {
+        return user.id === parseInt(id, 10);
+      });
 
       return new Promise((resolve) => {
-        if(obj != null) {
-          resolve({ id: id, username: obj.username, password: '******' });
-        } else {
-          resolve(null);
-        }
-
+        resolve(filtered);
       });
     });
   }
@@ -52,7 +30,7 @@ class Users {
   addUser(user) {
     return redisClient.incrAsync('userIds').then((res) => {
       const id = res;
-      return redisClient.setAsync(`users:${id}`, JSON.stringify(user)).then(() => {
+      return redisClient.rpushAsync(`users`, JSON.stringify(user)).then(() => {
         return new Promise((resolve) => {
           resolve({ id: id, username: user.username, password: user.password });
         });
@@ -62,29 +40,19 @@ class Users {
 
 //PUT
   updateUser(id, user) {
-    user.id = id;
-    return redisClient.setAsync(`users:${id}`, JSON.stringify(user), 'XX').then((res) => {
-      return new Promise((resolve, reject) => {
-        if (res === 'OK') {
-          resolve();
-        } else {
-          reject();
-        }
-      });
-    });
+    return redisClient.setAsync('users', parseInt(id), JSON.stringify({
+      id: parseInt(id),
+      username: user.username,
+      password: user.password
+    }));
   }
 
 //DELETE
   removeUser(id) {
-    return redisClient.delAsync(`users:${id}`, 'XX').then((res) => {
-      return new Promise((resolve, reject) => {
-        if (res === '1') {
-          resolve();
-        } else {
-          reject();
-        }
-      });
-
+    return this.updateUser(id, {
+      id: parseInt(id),
+      username: 'deleted',
+      password: 'deleted'
     });
   }
 }
