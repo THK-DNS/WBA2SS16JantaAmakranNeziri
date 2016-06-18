@@ -1,5 +1,6 @@
 const express = require('express'); //Express for the web server
 const bodyParser = require('body-parser'); //Body-Parser to be able to formatted into JSON
+const path = require('path');
 
 // routes
 const accommodationRoute = require('./routes/accommodationRoute.js');
@@ -7,16 +8,18 @@ const evaluationRoute = require('./routes/evaluationRoute.js');
 const userRoute = require('./routes/userRoute.js');
 const travelRoute = require('./routes/travelRoute.js');
 
-
-const app = express();
+const server = express();
 
 // use json bodyparser
-app.use(bodyParser.json());
+server.use(bodyParser.json());
 
-app.use('/accommodations', accommodationRoute);
-app.use('/evaluations', evaluationRoute);
-app.use('/users', userRoute);
-app.use('/traveldestination', travelRoute);
+server.use('/api/accommodations', accommodationRoute);
+server.use('/api/evaluations', evaluationRoute);
+server.use('/api/users', userRoute);
+server.use('/api/traveldestination', travelRoute);
+
+// Serve static front-end content
+server.use(express.static(__dirname + '/public'));
 
 // start server listener
-app.listen(process.env.PORT);
+server.listen(process.env.PORT || 3000);
