@@ -5,7 +5,7 @@ const bodyParser = require('body-parser'); //Body-Parser to be able to formatted
 const accommodationRoute = require('./routes/accommodationRoute.js');
 const evaluationRoute = require('./routes/evaluationRoute.js');
 const userRoute = require('./routes/userRoute.js');
-// const travelRoute = require('./routes/travelRoute');
+const travelRoute = require('./routes/travelRoute.js');
 
 
 const app = express();
@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use('/accommodations', accommodationRoute);
 app.use('/evaluations', evaluationRoute);
 app.use('/users', userRoute);
-//app.use('/traveldestination', travelRoute);
+app.use('/traveldestination', travelRoute);
 
 // start server listener
 app.listen(process.env.PORT);

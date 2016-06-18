@@ -1,23 +1,19 @@
 const express = require ('express');
-const traveldestination = require ('../models/traveldestinationModel.js');
+const Accommodations = require('../models/accommodationModel.js');
+
+const accommodationModel = new Accommodations();
 
 const travelRoute = new express.Router();
 
-const traveldestinationModel = new traveldestination();
-
-
-traveldestinationRoute.route('/:name')
-
+travelRoute.route('/:cityname')
 //GET a traveldestination by its name
-
 .get((req, res) => {
-
-    traveldestinationModel.gettraveldestinationByName(req.params.name).then((traveldestination) => {
-      res.json(traveldestination);
+    accommodationModel.getAccommodationsByCity(req.params.cityname).then((accommodations) => {
+      res.json(accommodations);
       res.end();
     });
   })
 
 
 
-module.exports = userRoute;
+module.exports = travelRoute;

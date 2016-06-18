@@ -72,4 +72,11 @@ accommodationRoute.route('/:id/evaluations')
   res.end();
 });
 
+accommodationRoute.route('/traveldestinations/:cityname')
+.get((req, res) => {
+  accommodationModel.getAccommodationsByCity(req.params.cityname).then((data) => {
+    res.json(data);
+    res.end();
+  });
+})
 module.exports = accommodationRoute;

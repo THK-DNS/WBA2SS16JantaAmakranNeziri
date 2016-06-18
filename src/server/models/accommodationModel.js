@@ -37,9 +37,9 @@ class Accommodations {
   }
 
   getAccommodationsByCity(city) {
-    return this.getAccommodations().then((accommodation) => {
-      var filtered = accomodation.filter((accommodation) => {
-        return accommodation.cty === city;
+    return this.getAccommodations().then((accommodations) => {
+      var filtered = accommodations.filter((accommodation) => {
+        return accommodation.city.toLowerCase() === city.toLowerCase();
       });
 
       return new Promise((resolve) => {
