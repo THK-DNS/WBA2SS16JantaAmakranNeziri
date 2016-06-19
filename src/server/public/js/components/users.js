@@ -10,7 +10,13 @@ var UserList = React.createClass({
 		}
 
 		return (
-			<div id="userlist">{users}</div>
+			<div id="userlist">
+				<table>
+					<tbody>
+						{users}
+					</tbody>
+				</table>
+				</div>
 		);
 	},
 	getInitialState: function() {
@@ -28,7 +34,7 @@ var UserList = React.createClass({
 
 var User = React.createClass({
 	render: function() {
-		return (<h1>{this.props.name}</h1>);
+		return (<tr><td>{this.props.name}</td></tr>);
 	},
 	getInitialState: function() {
 		return { };

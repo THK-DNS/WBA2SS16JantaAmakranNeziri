@@ -10,12 +10,12 @@ var AccommodationList = React.createClass({
 				title={this.state.accommodations[i].title}
 				description={this.state.accommodations[i].description}
 				picture={this.state.accommodations[i].picture}
-					city={this.state.accommodations[i].cityname} />);
+					city={this.state.accommodations[i].city} />);
 		}
 
 		return (
 			<div id="accommodationlist">
-				<table border="1">
+				<table>
 					<tbody>
 					{accommodations}
 					</tbody>

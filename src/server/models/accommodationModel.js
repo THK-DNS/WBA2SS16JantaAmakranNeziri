@@ -6,8 +6,15 @@ class Accommodations {
 
   getAccommodations() {
     return redisClient.lrangeAsync('accommodations', 0, -1).then((accommodations) => {
+      var jsonAccommodations = JSON.parse('[' + accommodations + ']');
+
+      // Dont show deleted
+      var filtered = jsonAccommodations.filter((accommodation) => {
+        return accommodation.owner !== -1;
+      });
+
       return new Promise((resolve) => {
-        resolve(JSON.parse('[' + accommodations + ']'));
+        resolve(filtered);
       });
     });
   }
