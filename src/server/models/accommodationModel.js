@@ -72,7 +72,7 @@ class Accommodations {
       title: accommodation.title,
       description: accommodation.description,
       picture: accommodation.picture,
-      city: accommodation.cty
+      city: accommodation.city
     }));
   }
 }
