@@ -60,15 +60,22 @@ class Accommodations {
   }
 
   addAccommodation(accommodation) {
+    
     return redisClient.incrAsync('accommodationIds').then((res) => {
-      return redisClient.rpushAsync('accommodations', JSON.stringify({
+      var accoObj = {
         id: parseInt(res, 10),
         owner: parseInt(accommodation.owner, 10),
         title: accommodation.title,
         description: accommodation.description,
         picture: accommodation.picture,
         city: accommodation.city
-      }));
+      };
+
+      return redisClient.rpushAsync('accommodations', JSON.stringify(accoObj)).then(() => {
+        return new Promise((resolve) => {
+          resolve(accoObj);
+        });
+      });
     });
   }
 

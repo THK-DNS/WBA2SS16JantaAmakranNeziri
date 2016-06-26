@@ -1,22 +1,19 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var ListGroup = require('react-bootstrap').ListGroup;
+var ListGroupItem = require('react-bootstrap').ListGroupItem;
 
 var UserList = React.createClass({
 	render: function() {
 		var users = [];
 
 		for(var i = 0;i < this.state.users.length;i++) {
-			users.push(<User key={this.state.users[i]._id} name={this.state.users[i].username} />);
+			var link = "users/" + this.state.users[i]._id;
+			users.push(<ListGroupItem href={link}><User key={this.state.users[i]._id} name={this.state.users[i].username} /></ListGroupItem>);
 		}
 
 		return (
-			<div id="userlist">
-				<table>
-					<tbody>
-						{users}
-					</tbody>
-				</table>
-				</div>
+		<ListGroup>{users}</ListGroup>
 		);
 	},
 	getInitialState: function() {

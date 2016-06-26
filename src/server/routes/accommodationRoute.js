@@ -18,8 +18,8 @@ accommodationRoute.route('/')
   })
 .post((req, res) => {
     // Add row
-    accommodationModel.addAccommodation(req.body).then(() => {
-      res.json(req.body);
+    accommodationModel.addAccommodation(req.body).then((data) => {
+      res.json(data);
       res.end();
     });
   })
