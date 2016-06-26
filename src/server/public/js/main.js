@@ -166,7 +166,7 @@ var Root = React.createClass({
   			// Send Signup
   			$.ajax({
 			    type: 'POST',
-			    url: 'http://localhost:3000/api/auth/signup',
+			    url: 'https://accoeval.herokuapp.com/api/auth/signup',
 			    data: JSON.stringify({ username: user, password: pass }),
 			    success: (user) => { 
 			    	this.setState({ user: user });
@@ -181,7 +181,7 @@ var Root = React.createClass({
   	handleSignInButton() {
   		$.ajax({
 			type: 'POST',
-			url: 'http://localhost:3000/api/auth/signin',
+			url: 'https://accoeval.herokuapp.com/api/auth/signin',
 			data: JSON.stringify({
 				username: document.getElementById('username').value, 
 				password: document.getElementById('password').value
