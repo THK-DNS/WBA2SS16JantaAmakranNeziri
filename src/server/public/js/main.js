@@ -15,6 +15,7 @@ var Modal = require('react-bootstrap').Modal;
 var FormGroup = require('react-bootstrap').FormGroup;
 var FormControl = require('react-bootstrap').FormControl;
 var ControlLabel = require('react-bootstrap').ControlLabel;
+var Alert = require('react-bootstrap').Alert;
 
 // Components
 var UserList = require('./components/users.js').UserList;
@@ -28,10 +29,10 @@ var Root = React.createClass({
 		return (<div>
 				{this.renderSignUpModal()}
 				{this.renderSignInModal()}
-				<Userbar onSignUpClick={this.showSignUpModal} onSignInClick={this.showSignInModal} />
-				<AccommodationList source="https://accoeval.herokuapp.com/api/accommodations" />
-				<UserList source="https://accoeval.herokuapp.com/api/users" />
-				<EvaluationList source="https://accoeval.herokuapp.com/api/evaluations" />
+				<Userbar user={this.state.user} onSignOffClick={this.onSignOff} onSignUpClick={this.showSignUpModal} onSignInClick={this.showSignInModal} />
+				<AccommodationList user={this.state.user} source="https://accoeval.herokuapp.com/api/accommodations" />
+				<UserList user={this.state.user} source="https://accoeval.herokuapp.com/api/users" />
+				<EvaluationList user={this.state.user} source="https://accoeval.herokuapp.com/api/evaluations" />
 			</div>
 		);
 	},
@@ -39,7 +40,10 @@ var Root = React.createClass({
 		return {
 			showRegisterModal: false,
 			showSignUpModal: false,
-			showSignInModal: false
+			showSignInModal: false,
+			nosignin: false,
+			nopassrepeat: false,
+			user: undefined
 		};
 	},
 	componentDidMount: function() {
@@ -49,18 +53,29 @@ var Root = React.createClass({
 
   	},
   	renderSignInModal: function() {
+  			var usernameOrPassword;
+
+  			if(this.state.nosignin === true) {
+  				usernameOrPassword = <Alert bsStyle="danger">
+								    Username or password incorrect.
+								  </Alert>
+  			} else {
+  				usernameOrPassword = '';
+  			}
+
   			return <Modal show={this.state.showSignInModal} onHide={this.onHideSignInModal}>
 				      <Modal.Header>
 				        <Modal.Title>Sign In</Modal.Title>
 				      </Modal.Header>
 
 				      <Modal.Body>
+				      {usernameOrPassword}
 					      <form>
-						    <FormGroup controlId="formControlsText">
+						    <FormGroup controlId="username">
 						      <ControlLabel>Username</ControlLabel>
 						      <FormControl type="text" placeholder="Enter username" />
 						    </FormGroup>
-						   <FormGroup controlId="formControlsPassword">
+						   <FormGroup controlId="password">
 						      <ControlLabel>Password</ControlLabel>
 						      <FormControl type="password" />
 						    </FormGroup>
@@ -69,38 +84,51 @@ var Root = React.createClass({
 
 				      <Modal.Footer>
 				        <Button onClick={this.onHideSignInModal}>Cancel</Button>
-				        <Button bsStyle="primary">Sign In</Button>
+				        <Button onClick={this.handleSignInButton} bsStyle="primary">Sign In</Button>
 				      </Modal.Footer>
 
 				    </Modal>;
   	},
   	showSignInModal() {
   		this.setState({
-  			showSignInModal: true
+  			showSignInModal: true,
+  			nosignin: false
   		});
   	},
   	onHideSignInModal() {
   		this.setState({
-  			showSignInModal: false
+  			showSignInModal: false,
+  			nosignin: false
   		});
   	},
   	renderSignUpModal: function() {
+  			var passRepeatError;
+
+  			if(this.state.nopassrepeat === true) {
+  				passRepeatError = <Alert bsStyle="danger">
+								    Password does not match.
+								  </Alert>
+  			} else {
+  				passRepeatError = '';
+  			}
+
   			return <Modal show={this.state.showSignUpModal} onHide={this.onHideSignUpModal}>
 				      <Modal.Header>
 				        <Modal.Title>Sign Up</Modal.Title>
 				      </Modal.Header>
 
 				      <Modal.Body>
+				      {passRepeatError}
 					      <form>
-						    <FormGroup controlId="formControlsText">
+						    <FormGroup controlId="username">
 						      <ControlLabel>Username</ControlLabel>
 						      <FormControl type="text" placeholder="Enter username" />
 						    </FormGroup>
-						   <FormGroup controlId="formControlsPassword">
+						   <FormGroup controlId="password">
 						      <ControlLabel>Password</ControlLabel>
 						      <FormControl type="password" />
 						    </FormGroup>
-						    <FormGroup controlId="formControlsPassword">
+						    <FormGroup controlId="repeatPassword">
 						      <ControlLabel>Repeat Password</ControlLabel>
 						      <FormControl type="password" />
 						    </FormGroup>
@@ -109,20 +137,69 @@ var Root = React.createClass({
 
 				      <Modal.Footer>
 				        <Button onClick={this.onHideSignUpModal}>Cancel</Button>
-				        <Button bsStyle="primary">Submit</Button>
+				        <Button onClick={this.handleSignUpButton} bsStyle="primary">Submit</Button>
 				      </Modal.Footer>
 
 				    </Modal>;
   	},
   	showSignUpModal() {
   		this.setState({
-  			showSignUpModal: true
+  			showSignUpModal: true,
+  			nopassrepeat: false
   		});
   	},
   	onHideSignUpModal() {
   		this.setState({
-  			showSignUpModal: false
+  			showSignUpModal: false,
+  			nopassrepeat: false
   		});
+  	},
+  	handleSignUpButton() {
+  		var user = document.getElementById('username').value;
+  		var pass = document.getElementById('password').value;
+
+  		if(pass !== document.getElementById('repeatPassword').value) {
+  			this.setState({
+	  			nopassrepeat: true
+	  		});
+  		} else {
+  			// Send Signup
+  			$.ajax({
+			    type: 'POST',
+			    url: 'http://localhost:3000/api/auth/signup',
+			    data: JSON.stringify({ username: user, password: pass }),
+			    success: (user) => { 
+			    	this.setState({ user: user });
+			    	this.onHideSignUpModal();
+			    },
+			    contentType: "application/json",
+			    dataType: 'json'
+			});
+  			
+  		}
+  	},
+  	handleSignInButton() {
+  		$.ajax({
+			type: 'POST',
+			url: 'http://localhost:3000/api/auth/signin',
+			data: JSON.stringify({
+				username: document.getElementById('username').value, 
+				password: document.getElementById('password').value
+			}),
+			success: (user) => { 
+				this.setState({ user: user });
+			    this.onHideSignInModal();
+			},
+			error: (jqXHR, textStatus, errorThrown) => {
+				this.setState({ nosignin: true });
+			},
+			contentType: "application/json",
+			dataType: 'json'
+		});
+  		
+  	},
+  	onSignOff() {
+  		this.setState({ user: undefined });
   	}
 });
 

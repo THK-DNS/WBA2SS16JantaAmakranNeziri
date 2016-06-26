@@ -16,28 +16,40 @@ var FormGroup = require('react-bootstrap').FormGroup;
 var FormControl = require('react-bootstrap').FormControl;
 var ControlLabel = require('react-bootstrap').ControlLabel;
 
+var EvaluationList = require('./evaluations.js').EvaluationList;
+
 var AccommodationList = React.createClass({
 	render: function() {
 		var accommodations = [];
 		
 
 		for(var i = 0;i < this.state.accommodations.length;i++) {
-			accommodations.push(<Accomodation id={this.state.accommodations[i].id} 
+			accommodations.push(<Accomodation 
+				user={this.props.user} 
+				id={this.state.accommodations[i].id} 
 				key={this.state.accommodations[i].id} 
 				title={this.state.accommodations[i].title}
 				description={this.state.accommodations[i].description}
 				picture={this.state.accommodations[i].picture}
-					city={this.state.accommodations[i].city}
-						onClickEvaluation={this.handleEvaluationButton}
-						onClickEdit={this.handleEditButton}
-						onClickRemove={this.handleRemoveButton} />);
+				owner={this.state.accommodations[i].owner}
+				city={this.state.accommodations[i].city}
+				onClickEvaluation={this.handleEvaluationButton}
+				onClickEdit={this.handleEditButton}
+				onClickRemove={this.handleRemoveButton} />);
+		}
+		var addAccButton;
+
+		if(this.props.user !== undefined) {
+			addAccButton = <Button onClick={this.showAddAccModal}>
+							<Glyphicon glyph="glyphicon glyphicon-plus" /> Accommodation
+						</Button>
+		} else {
+			addAccButton = '';
 		}
 
 		return (<div>
 			{this.renderAddAccModal()}
-			<Button onClick={this.showAddAccModal}>
-					<Glyphicon glyph="glyphicon glyphicon-plus" /> Accommodation
-				</Button>
+			{addAccButton}
 			<ListGroup>
 				{accommodations.map((accomodation) => {
 					return <ListGroupItem>{accomodation}</ListGroupItem>
@@ -59,12 +71,6 @@ var AccommodationList = React.createClass({
   	componentWillMount: function() {
 
   	},
-  	handleEvaluationButton: function(id) {
-		console.log(id);
-	},
-	handleEditButton: function(id) {
-		console.log(id);
-	},
 	handleRemoveButton: function(id) {
 		$.ajax({
 			type: 'DELETE',
@@ -73,14 +79,14 @@ var AccommodationList = React.createClass({
 		    	var removed = this.state.accommodations.filter((acco) => {
 		    		return acco.id !== id;
 		    	});
-		    	
+
 		    	this.setState({accommodations: removed});
 		    }
 		});
 	},
   	handleAddAcco() {
   		var accommodation = {
-  			owner: 0,
+  			owner: this.props.user._id,
   			title: document.getElementById('accotitle').value,
   			description: document.getElementById('accodesc').value,
   			picture: document.getElementById('accopic').value,
@@ -92,7 +98,10 @@ var AccommodationList = React.createClass({
 		    url: this.props.source,
 		    data: JSON.stringify(accommodation),
 		    success: (data) => { 
-		    	console.log(data);
+		    	var newAccommodations = this.state.accommodations;
+		    	newAccommodations.push(data);
+		    	this.setState({accommodations: newAccommodations});
+		    	this.onHideAddAccModal();
 		    },
 		    contentType: "application/json",
 		    dataType: 'json'
@@ -146,16 +155,39 @@ var AccommodationList = React.createClass({
 
 var Accomodation = React.createClass({
 	render: function() {
-
 		var control = '';
 		// Gets only controls if he's logged in and owning accomodations
-		control = <ButtonToolbar>
-			      <ButtonGroup bsSize="small">
-			      	<Button onClick={() => this.props.onClickEvaluation(this.props.id)} bsStyle="primary"><Glyphicon glyph="glyphicon glyphicon-comment" /></Button>
-			        <Button onClick={() => this.props.onClickEdit(this.props.id)} ><Glyphicon glyph="glyphicon glyphicon-pencil" /></Button>
-			        <Button onClick={() => this.props.onClickRemove(this.props.id)} bsStyle="danger"><Glyphicon glyph="glyphicon glyphicon-remove" /></Button>
-			      </ButtonGroup>
-			    </ButtonToolbar>;
+		if(this.props.user !== undefined && this.props.owner === this.props.user._id) {
+			control = <ButtonToolbar>
+					  	<ButtonGroup bsSize="small">
+					      	<Button onClick={() => this.handleEvaluationButton(this.props.id)} bsStyle="primary">
+					      		<Glyphicon glyph="glyphicon glyphicon-comment" />
+					      	</Button>
+					        <Button onClick={() => this.handleEditButton(this.props.id)} >
+					        	<Glyphicon glyph="glyphicon glyphicon-pencil" />
+					        </Button>
+					        <Button onClick={() => this.props.onClickRemove(this.props.id)} bsStyle="danger">
+					        	<Glyphicon glyph="glyphicon glyphicon-remove" />
+					        </Button>
+					    </ButtonGroup>
+					</ButtonToolbar>
+			} else {
+			control = <ButtonToolbar>
+			      		<ButtonGroup bsSize="small">
+			      			<Button onClick={() => this.handleEvaluationButton(this.props.id)} bsStyle="primary">
+			      				<Glyphicon glyph="glyphicon glyphicon-comment" />
+			      			</Button>
+			      		</ButtonGroup>
+			    	</ButtonToolbar>;
+		}
+		var evaluations;
+
+		if(this.state.showEvaluations) {
+			var source = `https://accoeval.herokuapp.com/api/accommodations/${this.props.id}/evaluations`;
+			evaluations = <EvaluationList user={this.props.user} source={source} />
+		} else {
+			evaluations = '';
+		}
 
 		return (
 		<Grid>
@@ -178,15 +210,24 @@ var Accomodation = React.createClass({
 				</Col>
 				<Col md={2}>{control}</Col>
 			</Row>
+			<Row>{evaluations}</Row>
 		</Grid>
 			);
 	},
 	getInitialState: function() {
-		return { };
+		return { showEvaluations: false };
 	},
 	componentDidMount: function() {
 
-  	}
+  	},
+  	handleEvaluationButton: function(id) {
+		this.setState({ 
+			showEvaluations: !this.state.showEvaluations 
+		});
+	},
+	handleEditButton: function(id) {
+		console.log(id);
+	}
 });
 
 module.exports.AccommodationList = AccommodationList;

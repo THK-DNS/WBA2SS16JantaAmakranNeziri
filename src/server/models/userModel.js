@@ -74,10 +74,9 @@ class Users {
 
   isValidLogin(username, password) {
     return this.getUserByName(username).then((user) => {
-      
       return new Promise((resolve, reject) => {
         if(user.length > 0 && user[0].password === password) {
-          resolve(user);
+          resolve(user[0]);
         } else {
           // User not found or password incorrect
           reject();

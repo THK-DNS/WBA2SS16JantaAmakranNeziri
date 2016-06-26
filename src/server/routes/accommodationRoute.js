@@ -57,7 +57,7 @@ accommodationRoute.route('/:id')
 
 accommodationRoute.route('/:id/evaluations')
 .get((req, res) => {
-  evaluationModel.getEvaluationsByAccommodation(req.params.id, (data) => {
+  evaluationModel.getEvaluationsByAccommodation(req.params.id).then((data) => {
     res.json(data);
     res.end();
   });

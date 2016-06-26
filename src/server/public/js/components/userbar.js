@@ -7,11 +7,25 @@ var NavDropdown = require('react-bootstrap').NavDropdown;
 var MenuItem = require('react-bootstrap').MenuItem;
 var Button = require('react-bootstrap').Button;
 var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
-
+var Well = require('react-bootstrap').Well;
 
 var Userbar = React.createClass({
 	render: function() {
-		return (
+		var signInUp;
+		var welcome;
+		if(this.props.user === undefined) {
+			signInUp = <ButtonToolbar>
+		    <Button onClick={this.props.onSignUpClick} bsStyle="success">Sign Up</Button>
+		    <Button onClick={this.props.onSignInClick} >Sign In</Button>
+		    </ButtonToolbar>;
+		    welcome = '';
+		} else {
+			signInUp = <ButtonToolbar>
+						    <Button onClick={this.props.onSignOffClick}>Sign Off</Button>
+		    			</ButtonToolbar>;
+			welcome = '';//<Well>Logged in as {this.props.user.username}</Well>;
+		}
+		return (<div>
 			<Navbar>
 		    <Navbar.Header>
 		      <Navbar.Brand>
@@ -22,11 +36,10 @@ var Userbar = React.createClass({
 		      <NavItem eventKey={1} href="#">Accomodations</NavItem>
 		      <NavItem eventKey={2} href="#">Users</NavItem>
 		    </Nav>
-		    <ButtonToolbar>
-		    <Button onClick={this.props.onSignUpClick} bsStyle="success">Sign Up</Button>
-		    <Button onClick={this.props.onSignInClick} >Sign In</Button>
-		    </ButtonToolbar>
+		   {signInUp}
+		   {welcome}
 		  </Navbar>
+		  </div>
 			);
 	},
 	getInitialState: function() {
