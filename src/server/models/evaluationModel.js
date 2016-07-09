@@ -61,7 +61,7 @@ class Evaluations {
       };
 
       return redisClient.rpushAsync('evaluations', JSON.stringify(evalObj)).then(() => {
-        new Promise((resolve) => {
+        return new Promise((resolve) => {
           resolve(evalObj);
         })
       });

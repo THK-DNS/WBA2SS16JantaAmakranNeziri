@@ -44,9 +44,7 @@ var EvaluationList = React.createClass({
 			<ListGroup>
 				{this.renderAddEvalModal()}
 				{evaluations.map((evaluation) => {
-					console.log(evaluation.accommodation);
-					console.log(this.props.accommodation);
-					if(evaluation.accommodation === this.props.accommodation) {
+					if(this.props.inacco === 'false' || evaluation.props.accommodation === this.props.accommodation) {
 						return <ListGroupItem>{evaluation}</ListGroupItem>
 					} else {
 						return '';
@@ -128,14 +126,21 @@ var EvaluationList = React.createClass({
 
 var Evaluation = React.createClass({
 	render: function() {
-		var entry = this.props.text + ' (' + this.props.rating + ')';
+		
+		// 
+		var rating = [];
+		for(var i = 0;i < parseInt(this.props.rating);i++) {
+			rating.push(<Glyphicon glyph="glyphicon glyphicon-star" />);
+		}
+
 		return (
 			<div>
-			{entry}
+			{this.props.text}	({rating})
+
 			</div>);
 	},
 	getInitialState: function() {
-		return { };
+		return { evaluation: undefined };
 	},
 	componentDidMount: function() {
 

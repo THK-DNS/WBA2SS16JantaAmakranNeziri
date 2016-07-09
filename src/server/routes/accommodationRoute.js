@@ -11,7 +11,6 @@ accommodationRoute.route('/')
 .get((req, res) => {
     // Get all
     accommodationModel.getAccommodations().then((data) => {
-      console.log(data);
       res.json(data);
       res.end();
     });
