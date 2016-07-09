@@ -16,36 +16,36 @@ class Evaluations {
 
   getEvaluationsById(id) {
     return this.getEvaluations().then((evaluations) => {
-      const filteredEvaluations = evaluations.filter((elem) => {
+      var filtered = evaluations.filter((elem) => {
         return elem.id === parseInt(id, 10);
-      })
+      })  
 
       return new Promise((resolve) => {
-        resolve(filteredEvaluations);
+        resolve(filtered);
       });
     });
   }
 
   getEvaluationsByWriter(writerId) {
    return this.getEvaluations().then((evaluations) => {
-      const filteredEvaluations = evaluations.filter((elem) => {
+      var filtered = evaluations.filter((elem) => {
         return elem.writer === parseInt(writerId, 10);
       })
 
       return new Promise((resolve) => {
-        resolve(filteredEvaluations);
+        resolve(filtered);
       });
     });
   }
 
   getEvaluationsByAccommodation(accommodationId) {
     return this.getEvaluations().then((evaluations) => {
-      const filteredEvaluations = evaluations.filter((elem) => {
+      var filtered = evaluations.filter((elem) => {
         return elem.accommodation === parse(accommodationId, 10);
       })
 
       return new Promise((resolve) => {
-        resolve(filteredEvaluations);
+        resolve(filtered);
       });
     });
   }

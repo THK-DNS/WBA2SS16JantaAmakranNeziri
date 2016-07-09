@@ -80,8 +80,6 @@ var EvaluationList = React.createClass({
   			text: document.getElementById('evaltext').value,
   			rating: document.getElementById('evalrating').value
   		};
-  		
-  		console.log(evaluation);
 
 		$.ajax({
 		    type: 'POST',
