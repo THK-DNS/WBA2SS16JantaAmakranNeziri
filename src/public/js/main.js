@@ -32,7 +32,7 @@ var Root = React.createClass({
 				<Userbar user={this.state.user} onSignOffClick={this.onSignOff} onSignUpClick={this.showSignUpModal} onSignInClick={this.showSignInModal} />
 				<AccommodationList user={this.state.user} source="https://accoeval.herokuapp.com/api/accommodations" />
 				<UserList user={this.state.user} source="https://accoeval.herokuapp.com/api/users" />
-				<EvaluationList user={this.state.user} source="https://accoeval.herokuapp.com/api/evaluations" />
+				<EvaluationList inacco="false" user={this.state.user} source="https://accoeval.herokuapp.com/api/evaluations" />
 			</div>
 		);
 	},

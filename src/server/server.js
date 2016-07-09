@@ -2,6 +2,9 @@ const express = require('express'); //Express for the web server
 const bodyParser = require('body-parser'); //Body-Parser to be able to formatted into JSON
 const path = require('path');
 
+// config
+require('dotenv').config();
+
 // routes
 const authRoute = require('./auth/authRoute.js');
 const accommodationRoute = require('./routes/accommodationRoute.js');
@@ -21,7 +24,7 @@ server.use('/api/users', userRoute);
 server.use('/api/traveldestination', travelRoute);
 
 // Serve static front-end content
-server.use(express.static(__dirname + '/public'));
+server.use(express.static(__dirname + '/../public'));
 
 // start server listener
 server.listen(process.env.PORT || 3000);

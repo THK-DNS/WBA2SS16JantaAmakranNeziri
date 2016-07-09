@@ -184,7 +184,7 @@ var Accomodation = React.createClass({
 
 		if(this.state.showEvaluations) {
 			var source = `https://accoeval.herokuapp.com/api/accommodations/${this.props.id}/evaluations`;
-			evaluations = <EvaluationList user={this.props.user} source={source} />
+			evaluations = <EvaluationList inacco="true" user={this.props.user} source={source} />
 		} else {
 			evaluations = '';
 		}

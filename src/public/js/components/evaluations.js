@@ -31,8 +31,7 @@ var EvaluationList = React.createClass({
 		}
 
 		var addEvaluationButton;
-
-		if(this.props.user !== undefined) {
+		if(this.props.user !== undefined && this.props.inacco === 'true') {
 			addEvaluationButton = <Button onClick={this.showAddEvalModal}>
 									<Glyphicon glyph="glyphicon glyphicon-plus" /> Evaluation
 								</Button>
