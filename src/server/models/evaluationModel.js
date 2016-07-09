@@ -41,7 +41,7 @@ class Evaluations {
   getEvaluationsByAccommodation(accommodationId) {
     return this.getEvaluations().then((evaluations) => {
       var filtered = evaluations.filter((elem) => {
-        return elem.accommodation === parse(accommodationId, 10);
+        return elem.accommodation === parseInt(accommodationId, 10);
       })
 
       return new Promise((resolve) => {
