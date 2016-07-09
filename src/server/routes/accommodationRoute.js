@@ -63,7 +63,10 @@ accommodationRoute.route('/:id/evaluations')
   });
 })
 .post((req, res) => {
-  res.end();
+  evaluationModel.addEvaluation(req.body).then((data) => {
+    res.json(data);
+    res.end();
+  });
 })
 .put((req, res) => {
   res.end();

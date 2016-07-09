@@ -25,6 +25,7 @@ var EvaluationList = React.createClass({
 				key={this.state.evaluations[i].id}
 				id={this.state.evaluations[i].id} 
 				writer={this.state.evaluations[i].writer}
+				accommodation={this.state.evaluations[i].accommodation}
 				text={this.state.evaluations[i].text}
 				rating={this.state.evaluations[i].rating}
 				user={this.props.user} />);
@@ -41,15 +42,25 @@ var EvaluationList = React.createClass({
 
 		return (
 			<ListGroup>
+				{this.renderAddEvalModal()}
 				{evaluations.map((evaluation) => {
-					return <ListGroupItem>{evaluation}</ListGroupItem>
+					console.log(evaluation.accommodation);
+					console.log(this.props.accommodation);
+					if(evaluation.accommodation === this.props.accommodation) {
+						return <ListGroupItem>{evaluation}</ListGroupItem>
+					} else {
+						return '';
+					}
 				})}
 				{addEvaluationButton}
 			</ListGroup>
 		);
 	},
 	getInitialState: function() {
-		return { evaluations: [] };
+		return { 
+			evaluations: [],
+			showAddEvalModal: false
+		 };
 	},
 	componentDidMount: function() {
 	    this.serverRequest = $.get(this.props.source, (result) => {
@@ -60,7 +71,60 @@ var EvaluationList = React.createClass({
 
   	},
   	showAddEvalModal() {
+  		this.setState({showAddEvalModal: true});
+  	},
+  	handleAddEval() {
+  		var evaluation = {
+  			writer: this.props.user._id,
+  			accommodation: this.props.accommodation,
+  			text: document.getElementById('evaltext').value,
+  			rating: document.getElementById('evalrating').value
+  		};
+  		
+  		console.log(evaluation);
 
+		$.ajax({
+		    type: 'POST',
+		    url: this.props.source,
+		    data: JSON.stringify(evaluation),
+		    success: (data) => { 
+		    	var newEvaluation = this.state.evaluations;
+		    	newEvaluation.push(data);
+		    	this.setState({evaluations: newEvaluation});
+		    	this.onHideAddEvalModal();
+		    },
+		    contentType: "application/json",
+		    dataType: 'json'
+		});
+  	},
+  	onHideAddEvalModal() {
+  		this.setState({showAddEvalModal: false});
+  	},
+  	renderAddEvalModal: function() {
+  			return <Modal show={this.state.showAddEvalModal} onHide={this.onHideAddEvalModal}>
+				      <Modal.Header>
+				        <Modal.Title>Add Evaluation</Modal.Title>
+				      </Modal.Header>
+
+				      <Modal.Body>
+					      <form>
+						    <FormGroup controlId="evaltext">
+						      <ControlLabel>Evaluation</ControlLabel>
+						      <FormControl type="text" placeholder="Enter evaluation text" />
+						    </FormGroup>
+						    <FormGroup controlId="evalrating">
+						      <ControlLabel>Rating</ControlLabel>
+						      <FormControl componentClass="textarea" placeholder="Enter rating" />
+						    </FormGroup>
+						    </form>
+				      </Modal.Body>
+
+				      <Modal.Footer>
+				        <Button onClick={this.onHideAddEvalModal}>Close</Button>
+				        <Button onClick={this.handleAddEval} bsStyle="primary">Add</Button>
+				      </Modal.Footer>
+
+				    </Modal>;
   	}
 });
 

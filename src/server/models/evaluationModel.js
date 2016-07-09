@@ -52,13 +52,19 @@ class Evaluations {
 
   addEvaluation(evaluation) {
     return redisClient.incrAsync('evaluationIds').then((id) => {
-      return redisClient.rpushAsync('evaluations', JSON.stringify({
+      var evalObj = {
         id: parseInt(id),
         writer: evaluation.writer,
         accommodation: evaluation.accommodation,
         text: evaluation.text,
         rating: evaluation.rating
-      }));
+      };
+
+      return redisClient.rpushAsync('evaluations', JSON.stringify(evalObj)).then(() => {
+        new Promise((resolve) => {
+          resolve(evalObj);
+        })
+      });
     });
   }
 
