@@ -73,24 +73,30 @@ var EvaluationList = React.createClass({
   	},
   	handleAddEval() {
   		var evaluation = {
-  			writer: this.props.user._id,
-  			accommodation: this.props.accommodation,
+  			writer: parseInt(this.props.user._id),
+  			accommodation: parseInt(this.props.accommodation),
   			text: document.getElementById('evaltext').value,
   			rating: document.getElementById('evalrating').value
   		};
+
+  		console.log(this.props.source);
+  		console.log(evaluation);
 
 		$.ajax({
 		    type: 'POST',
 		    url: this.props.source,
 		    data: JSON.stringify(evaluation),
+		    contentType: "application/json",
+		    dataType: 'json',
 		    success: (data) => { 
 		    	var newEvaluation = this.state.evaluations;
 		    	newEvaluation.push(data);
 		    	this.setState({evaluations: newEvaluation});
 		    	this.onHideAddEvalModal();
 		    },
-		    contentType: "application/json",
-		    dataType: 'json'
+		    error: (data) => {
+		    	console.log(data.getAllResponseHeaders());
+		    }
 		});
   	},
   	onHideAddEvalModal() {
