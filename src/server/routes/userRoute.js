@@ -2,14 +2,12 @@ const express = require('express');
 const Users = require('../models/userModel.js');
 const Evaluations = require('../models/evaluationModel.js');
 const Accommodations = require('../models/accommodationModel.js');
-//const Traveldestination = require ('../models/traveldestinationModel.js');
 
 const userRoute = new express.Router();
 
 const userModel = new Users();
 const accommodationModel = new Accommodations();
 const evaluationModel = new Evaluations();
-//const traveldestinationModel = new traveldestination();
 
 userRoute.route('/')
 .get((req, res) => {

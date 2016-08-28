@@ -11,15 +11,14 @@ accommodationRoute.route('/')
 .get((req, res) => {
     // Get all
     accommodationModel.getAccommodations().then((data) => {
-      console.log(data);
       res.json(data);
       res.end();
     });
   })
 .post((req, res) => {
     // Add row
-    accommodationModel.addAccommodation(req.body).then(() => {
-      res.json(req.body);
+    accommodationModel.addAccommodation(req.body).then((data) => {
+      res.json(data);
       res.end();
     });
   })
@@ -57,13 +56,16 @@ accommodationRoute.route('/:id')
 
 accommodationRoute.route('/:id/evaluations')
 .get((req, res) => {
-  evaluationModel.getEvaluationsByAccommodation(req.params.id, (data) => {
+  evaluationModel.getEvaluationsByAccommodation(req.params.id).then((data) => {
     res.json(data);
     res.end();
   });
 })
 .post((req, res) => {
-  res.end();
+  evaluationModel.addEvaluation(req.body).then((data) => {
+    res.json(data);
+    res.end();
+  });
 })
 .put((req, res) => {
   res.end();

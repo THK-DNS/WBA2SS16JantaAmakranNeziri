@@ -6,8 +6,15 @@ class Accommodations {
 
   getAccommodations() {
     return redisClient.lrangeAsync('accommodations', 0, -1).then((accommodations) => {
+      var jsonAccommodations = JSON.parse('[' + accommodations + ']');
+
+      // Dont show deleted
+      var filtered = jsonAccommodations.filter((accommodation) => {
+        return accommodation.owner !== -1;
+      });
+
       return new Promise((resolve) => {
-        resolve(JSON.parse('[' + accommodations + ']'));
+        resolve(filtered);
       });
     });
   }
@@ -53,15 +60,22 @@ class Accommodations {
   }
 
   addAccommodation(accommodation) {
+    
     return redisClient.incrAsync('accommodationIds').then((res) => {
-      return redisClient.rpushAsync('accommodations', JSON.stringify({
+      var accoObj = {
         id: parseInt(res, 10),
         owner: parseInt(accommodation.owner, 10),
         title: accommodation.title,
         description: accommodation.description,
         picture: accommodation.picture,
         city: accommodation.city
-      }));
+      };
+
+      return redisClient.rpushAsync('accommodations', JSON.stringify(accoObj)).then(() => {
+        return new Promise((resolve) => {
+          resolve(accoObj);
+        });
+      });
     });
   }
 
@@ -72,7 +86,7 @@ class Accommodations {
       title: accommodation.title,
       description: accommodation.description,
       picture: accommodation.picture,
-      city: accommodation.cty
+      city: accommodation.city
     }));
   }
 }

@@ -13,8 +13,8 @@ evaluationRoute.route('/')
   });
 })
 .post((req, res) => {
-  evaluationModel.addEvaluation(req.body).then((result) => {
-    res.json(req.body);
+  evaluationModel.addEvaluation(req.body).then((data) => {
+    res.json(data);
     res.end();
   });
 })
